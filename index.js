@@ -46,8 +46,15 @@ async function run() {
   const size = parseInt(req.query.size)
   const page = parseInt(req.query.page) -1
   console.log(size, page);
+  const filter = req.query.filter
   
-  const result = await productCollection.find().skip(page * size).limit(size).toArray()
+
+  let query = {
+    // productName: { $regex: search, $options: 'i' },
+  }
+  if (filter) query.category = filter
+  
+  const result = await productCollection.find(query).skip(page * size).limit(size).toArray()
 
   res.send(result)
 })
