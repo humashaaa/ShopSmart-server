@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://assignment-12-ef2db.web.app"],
+    origin: ["http://localhost:5173", ],
     credentials: true,
   })
 );
@@ -20,7 +20,6 @@ app.use(
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.wal4hcq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-console.log(uri);
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -32,14 +31,38 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  
+    const productCollection = client.db("shopSmart").collection("products");
+
+    // get products
+    app.get("/products", async (req, res) => {
+      const result = await productCollection.find().toArray();
+      res.send(result);
+    });
+    
+
+ // Get all data from db for pagination
+ app.get('/all-products', async (req, res) => {
+  const size = parseInt(req.query.size)
+  const page = parseInt(req.query.page) -1
+  console.log(size, page);
+  
+  const result = await productCollection.find().skip(page * size).limit(size).toArray()
+
+  res.send(result)
+})
+
+ // Get all  data count from db
+ app.get('/products-count', async (req, res) => {
+  
+  const count = await productCollection.countDocuments()
+
+  res.send({ count })
+})
+
+
   } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    
   }
 }
 run().catch(console.dir);
