@@ -55,6 +55,7 @@ async function run() {
     productName: { $regex: search, $options: 'i' },
   }
   if (filter) query.category = filter
+  let options = {}
   
   const result = await productCollection.find(query).skip(page * size).limit(size).toArray()
 
