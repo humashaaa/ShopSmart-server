@@ -47,10 +47,12 @@ async function run() {
   const page = parseInt(req.query.page) -1
   console.log(size, page);
   const filter = req.query.filter
-  
+  const sort = req.query.sort
+  const search = req.query.search
+  console.log(size, page)
 
   let query = {
-    // productName: { $regex: search, $options: 'i' },
+    productName: { $regex: search, $options: 'i' },
   }
   if (filter) query.category = filter
   
@@ -61,7 +63,13 @@ async function run() {
 
  // Get all  data count from db
  app.get('/products-count', async (req, res) => {
-  
+  // const filter = req.query.filter
+  // const search = req.query.search
+  // let query = {
+  //   productName: { $regex: search, $options: 'i' },
+  // }
+  // if (filter) query.category = filter
+  // query
   const count = await productCollection.countDocuments()
 
   res.send({ count })
