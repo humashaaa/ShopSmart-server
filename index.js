@@ -57,7 +57,7 @@ async function run() {
   if (filter) query.category = filter
   let options = {}
   if (sort) options = { sort: { deadline: sort === 'asc' ? 1 : -1 } }
-  
+
   const result = await productCollection.find(query).skip(page * size).limit(size).toArray()
 
   res.send(result)
@@ -65,13 +65,7 @@ async function run() {
 
  // Get all  data count from db
  app.get('/products-count', async (req, res) => {
-  // const filter = req.query.filter
-  // const search = req.query.search
-  // let query = {
-  //   productName: { $regex: search, $options: 'i' },
-  // }
-  // if (filter) query.category = filter
-  // query
+ 
   const count = await productCollection.countDocuments()
 
   res.send({ count })
